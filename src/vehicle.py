@@ -5,9 +5,6 @@ Drone control with aruco markers
 @mail smustafauludag@gmail.com
 """
 
-
-import time
-
 import cv2 as cv
 import numpy as np
 import rospy
@@ -557,7 +554,7 @@ class Plotter():
       plt.show()
 
 
-class Quadrotor():
+class Vehicle():
   """ One class to rule them all !!! """
   def __init__(self,nav_dev,
                cam_arucoDict,cam_is_sim,
@@ -701,41 +698,41 @@ class Quadrotor():
                      self.cam.IsMarkerDetected()))
 
 
-def main():
-  try:
-    quad = Quadrotor("GAZEBO","DICT_5X5_100",True,
-                    0.33,0.05,0,
-                    0.33,0.05,0,
-                    0.1,0,0,
-                    1,0,0)
-    quad.SetMode("GUIDED")
-    quad.SetHomePosition()
-    quad.Takeoff(2)
-    quad.Sleep(3)
-    quad.MissionAdd(lat=-35.36322005,
-                    lon=149.16515675,
-                    alt=2,
-                    name="PATIENT_1",
-                    marker_id=42)
-    quad.Go2MissionPoint("PATIENT_1")
-    while not rospy.is_shutdown():
-      start_time = time.time()
+# def main():
+#   try:
+#     quad = Quadrotor("GAZEBO","DICT_5X5_100",True,
+#                     0.33,0.05,0,
+#                     0.33,0.05,0,
+#                     0.1,0,0,
+#                     1,0,0)
+#     quad.SetMode("GUIDED")
+#     quad.SetHomePosition()
+#     quad.Takeoff(2)
+#     quad.Sleep(3)
+#     quad.MissionAdd(lat=-35.36322005,
+#                     lon=149.16515675,
+#                     alt=2,
+#                     name="PATIENT_1",
+#                     marker_id=42)
+#     quad.Go2MissionPoint("PATIENT_1")
+#     while not rospy.is_shutdown():
+#       start_time = time.time()
 
-      quad.Go2Aruco()
-      quad.ShowCam(1)
-      quad.Terminal()
-      if quad.LandOnMarker():
-        break
+#       quad.Go2Aruco()
+#       quad.ShowCam(1)
+#       quad.Terminal()
+#       if quad.LandOnMarker():
+#         break
 
-      quad.dt = round(time.time()-start_time,2)
-      if cv.waitKey(10) & 0xFF == ord("q"):
-        cv.destroyAllWindows()
-        break
-    #quad.plot.Plot100()
+#       quad.dt = round(time.time()-start_time,2)
+#       if cv.waitKey(10) & 0xFF == ord("q"):
+#         cv.destroyAllWindows()
+#         break
+#     quad.plot.Plot100()
 
-  except KeyboardInterrupt:
-    sh.warning("Keyboard Interrupt, Shutting down")
+#   except KeyboardInterrupt:
+#     sh.warning("Keyboard Interrupt, Shutting down")
 
 
-if __name__ == '__main__':
-  main()
+# if __name__ == '__main__':
+#   main()
