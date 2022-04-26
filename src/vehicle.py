@@ -8,6 +8,7 @@ Drone control with aruco markers
 import cv2 as cv
 import numpy as np
 import rospy
+import time
 import matplotlib.pyplot as plt
 from cv_bridge import CvBridge, CvBridgeError
 from pymavlink import mavutil
@@ -341,11 +342,10 @@ class Camera():
     (corners,ids,rejected)=cv.aruco.detectMarkers(self._frame,self.arucoDict,
                                                   parameters=self.arucoParams)
     if len(corners)>0:
-      self._is_marker_detected = True
-      
       ids=ids.flatten()
       for (markerCorner, markerID) in zip(corners,ids):
         if markerID == marker_id:
+          self._is_marker_detected = True
           corners = markerCorner.reshape((4, 2))
           (topLeft, topRight, bottomRight, bottomLeft) = corners
 
@@ -368,7 +368,7 @@ class Camera():
           self.marker_area = round(Distance(TopLeft,TopRight)*Distance(TopLeft,BottomLeft),2)
           self._dist = Pixel2MeterXY(Distance(self.kFrameCenter,self.marker_center),self.marker_area)
           self._SteadyStateCallback()
-    else: self._is_marker_detected = False
+        else: self._is_marker_detected = False
 
 
   def IsMarkerDetected(self):
@@ -574,6 +574,7 @@ class Vehicle():
     self.DICT_MISSIONS = {"DEFAULT_1" : Mission(0,0,0,"DEFAULT_1",42)}
     self.current_mission = "DEFAULT_1"
     self._land_on_marker = False
+    self._item_drop = False
     self.home = Mission(0,0,0,"HOME",0)
 
 
@@ -629,6 +630,9 @@ class Vehicle():
     if mode:
       self.cam.DrawVisual()
     self.cam.ShowFrame()
+    
+  def DropItem(self):
+    self._item_drop = True
 
 
   def Go2Aruco(self):
@@ -638,13 +642,13 @@ class Vehicle():
     if self.cam.IsMarkerDetected():
       yaw = self.nav.GetYaw()
       yaw_relative = self.cam.YawMarkerRelative()
-      alt = self.nav.GetAltitude()
+      alt_desired = self.DICT_MISSIONS[self.current_mission].position[2]
       
       #PROBLEM : Simulation cannot detect marker under 0.7,0.6 meters altitude
       self.cam.AltitudeMarkerRelative()
       self.pid.ErrorSet(marker_center[0],frame_center[0], # X
                         marker_center[1],frame_center[1], # Y
-                        -0.5,self.cam.AltitudeMarkerRelative(),# -Z
+                        -alt_desired,self.cam.AltitudeMarkerRelative(),# -Z
                         0,yaw_relative,     # PSI
                         self.dt,yaw,area)
       out = self.pid.Process()
@@ -665,8 +669,9 @@ class Vehicle():
     if mission_name in self.DICT_MISSIONS.keys():
       lat,lon,alt = self.DICT_MISSIONS[mission_name].position
       self.current_mission = mission_name
-      self.nav.SetPositionGlobal(lat,lon,alt)
       marker_id = self.DICT_MISSIONS[self.current_mission].marker_id 
+
+      self.nav.SetPositionGlobal(lat,lon,alt)
       while True:
         self.Sleep(0.1)
         self.cam.GetMarkerFrameInfo(marker_id)
@@ -674,6 +679,17 @@ class Vehicle():
           mission_name,marker_id))
         if self.cam.IsMarkerDetected():
           break
+        
+      while not rospy.is_shutdown():
+        start_time = time.time()
+        self.Go2Aruco()
+        self.ShowCam(1)
+        self.Terminal()
+        self.dt = round(time.time()-start_time,2)
+        if self.cam.IsSteadyState():
+          cv.destroyAllWindows()
+          break
+      
       return 0
     else:
       sh.error("No mission with the name {}".format(mission_name))
@@ -689,13 +705,15 @@ class Vehicle():
           current mission: {}
           mission position {}
           is marker detected: {}
+          is item dropped: {}
           ======================================
           """.format(self.nav.curent_mode,
                      self.home.position,
                      self.GlobalPosition(),
                      self.current_mission,
                      self.DICT_MISSIONS[self.current_mission].position,
-                     self.cam.IsMarkerDetected()))
+                     self.cam.IsMarkerDetected(),
+                     self._item_drop))
 
 
 # def main():
