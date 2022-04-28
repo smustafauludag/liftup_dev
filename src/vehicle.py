@@ -698,24 +698,26 @@ class Vehicle():
       marker_id = self.DICT_MISSIONS[self.current_mission].marker_id 
 
       self.nav.SetPositionGlobal(lat,lon,alt)
-      while True:
-        self.Sleep(0.1)
-        self.cam.GetMarkerFrameInfo(marker_id)
-        sh.info("Going to mission {}, no marker[{}] seen yet".format(
-          mission_name,marker_id))
-        if self.cam.IsMarkerDetected():
-          break
-        
-      while not rospy.is_shutdown():
-        start_time = time.time()
-        self.Go2Aruco()
-        self.ShowCam(1)
-        self.Terminal()
-        self.dt = round(time.time()-start_time,2)
-        if self.cam.IsSteadyState():
-          cv.destroyAllWindows()
-          break
-      
+      if self.vc_type == 0:
+        while True:
+          self.Sleep(0.1)
+          self.cam.GetMarkerFrameInfo(marker_id)
+          sh.info("Going to mission {}, no marker[{}] seen yet".format(
+            mission_name,marker_id))
+          if self.cam.IsMarkerDetected():
+            break
+          
+        while not rospy.is_shutdown():
+          start_time = time.time()
+          self.Go2Aruco()
+          self.ShowCam(1)
+          self.Terminal()
+          self.dt = round(time.time()-start_time,2)
+          if self.cam.IsSteadyState():
+            if mission_name[:5] == "MEDIC":
+              self.DropItem()
+            cv.destroyAllWindows()
+            break
       return 0
     else:
       sh.error("No mission with the name {}".format(mission_name))
