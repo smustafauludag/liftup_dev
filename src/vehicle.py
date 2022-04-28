@@ -67,7 +67,9 @@ class PyMavlink():
   '''Quadrotor navigation and communication class via pymavlink'''
   def __init__(self,dev):
     self.__DICT_DEVICE_ADRESS = {"USB" : ["/dev/ttyUSB0",57600],
-                                 "GAZEBO" : ["udpin:localhost:14550",115200]}
+                                 "GAZEBO_1" : ["udpin:localhost:14550",115200],
+                                 "GAZEBO_2" : ["udpin:localhost:14560",115200],
+                                 "GAZEBO_3" : ["udpin:localhost:14570",115200]}
     if dev not in self.__DICT_DEVICE_ADRESS.keys():
       sh.error("Wrong key for device adress")
     else:
@@ -109,6 +111,20 @@ class PyMavlink():
     'SYSTEMID' :   25,
     'AUTOROTATE' : 26,
     'AUTO_RTL' :   27}
+    
+    self.__DICT_ROVER_MODE = {
+      'MANUAL' :  0,
+      'ACRO' :    1,
+      'STEERING' :3,
+      'HOLD' :    4,
+      'LOITER' :  5,
+      'FOLLOW' :  6,
+      'SIMPLE' :  7,
+      'AUTO' :    10,
+      'RTL' :     11,
+      'SMART_RTL' : 12,
+      'GUIDED' :    15,
+      'INITIALISING' : 16}
 
     self._yaw = 0
     self._altitude = 0
@@ -116,25 +132,32 @@ class PyMavlink():
     sh.success("Connection Initialized")
 
 
-  def SetModeQuad(self,mode):
+  def SetMode(self,mode,vehicle):
     """ 
     Set the mode of quadrotor from DICT_QUAD_MODE 
-    :param mode: Quadrotor mode
+    :param mode: vehicle
+    :param vehivle: 0 == quad; 1 == rover
     :returns 0:  Succes
     :returns -1: Failure
     """
-    if mode not in self.__DICT_QUAD_MODE.keys():
-      sh.error("Unknown mode")
+    if vehicle == 0 and mode not in self.__DICT_QUAD_MODE.keys():
+      sh.error("Unknown mode for quad")
+      return -1
+    elif vehicle == 1 and mode not in self.__DICT_ROVER_MODE.keys():
+      sh.error("Unknown mode for rover")
       return -1
     else:
-      mode_id = self.__DICT_QUAD_MODE[mode]
+      if vehicle == 0:
+        mode_id = self.__DICT_QUAD_MODE[mode]
+      if vehicle == 1:
+        mode_id = self.__DICT_ROVER_MODE[mode]
       self._the_connection.mav.command_long_send(
         self._the_connection.target_system, 
         self._the_connection.target_component,
         mavutil.mavlink.MAV_CMD_DO_SET_MODE,0,
         mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
         mode_id,0,0,0,0,0)
-      sh.info("Mode: {}".format(mode))
+      sh.info("Vehicle type: {}, Mode: {}".format(vehicle,mode))
       self.curent_mode = mode
       # while True:
       #   msg = self._the_connection.recv_match(type='COMMAND_ACK',blocking=True)
@@ -182,11 +205,6 @@ class PyMavlink():
     #   #TODO Check heartbeat message to get mode status
 
 
-  def RTL(self):
-    """ Return To Launch """
-    self.SetModeQuad("RTL")
-
-
   def Takeoff(self,h):
     """
     Arm the quadrotor and takae off
@@ -204,7 +222,7 @@ class PyMavlink():
 
   def Land(self):
     """ Land the quadrotor were it is """
-    self.SetModeQuad("LAND")
+    self.SetMode("LAND")
     sh.info("Landing")
 
 
@@ -556,12 +574,20 @@ class Plotter():
 
 class Vehicle():
   """ One class to rule them all !!! """
-  def __init__(self,nav_dev,
+  def __init__(self,vehicle_type,nav_dev,
                cam_arucoDict,cam_is_sim,
                pid_kp_x,pid_kd_x,pid_ki_x,
                pid_kp_y,pid_kd_y,pid_ki_y,
                pid_kp_z,pid_kd_z,pid_ki_z,
                pid_kp_psi,pid_kd_psi,pid_ki_psi):
+
+    if vehicle_type == "QUAD":
+      self.vc_type = 0
+    elif vehicle_type == "ROVER":
+      self.vc_type = 1
+    else:
+      sh.error("Wrong vehicle type")
+    
     self.plot=Plotter()
     self.dt = 0.1
     self.nav = PyMavlink(nav_dev)
@@ -603,7 +629,7 @@ class Vehicle():
     Set quadrotor mode
     :param mode: PyMavlink.DICT_QUAD_MODE
     """
-    self.nav.SetModeQuad(mode)
+    self.nav.SetMode(mode,self.vc_type)
 
 
   def LandOnMarker(self):

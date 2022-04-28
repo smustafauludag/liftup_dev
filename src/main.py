@@ -5,7 +5,7 @@ import bash_info_helper as sh
 
 
 def main():
-  uav = vc.Vehicle("GAZEBO","DICT_5X5_100",True,
+  uav = vc.Vehicle("GAZEBO_1","DICT_5X5_100",True,
                 0.33,0.05,0,
                 0.33,0.05,0,
                 0.1,0,0,
@@ -13,7 +13,7 @@ def main():
   
   uav.MissionAdd(lat=-35.36322005,
                   lon=149.16515675,
-                  alt=1,
+                  alt=2,
                   name="MEDIC_1",
                   marker_id=42)
   uav.MissionAdd(lat=-35.36321188,
