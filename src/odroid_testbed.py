@@ -4,7 +4,7 @@ import vehicle as vc
 import bash_info_helper as sh
 
 def main():
-  uav = vc.Vehicle("QUAD","USB","DICT_5X5_100",False,
+  uav = vc.Vehicle("QUAD","USB_RASPI","DICT_5X5_100",False,
                 0.33,0.05,0,
                 0.33,0.05,0,
                 0.1,0,0,
