@@ -10,7 +10,7 @@ import numpy as np
 import rospy
 import time
 import matplotlib.pyplot as plt
-from cv_bridge import CvBridge, CvBridgeError
+from cv_bridge import CvBridge
 from pymavlink import mavutil
 from sensor_msgs.msg import Image
 
@@ -288,8 +288,8 @@ class Camera():
     self.kChannels = channels
     self.is_sim = is_sim
     if not is_sim:
-      self.cap=cv.VideoCapture(2)
-      self.cap.set(3,self.kFrameWith)
+      self.cap=cv.VideoCapture(0)
+      self.cap.set(3,self.kFrameWidth)
       self.cap.set(10,150)
       self.cap.set(4,self.kFrameHeight)
     else:
@@ -354,7 +354,7 @@ class Camera():
 
   def _MarkerDetection(self,marker_id):
     if not self.is_sim:
-      self._frame = self.cap.read()
+      success,self._frame = self.cap.read()
     else:
       self._frame = self.SimGetImage()
     (corners,ids,rejected)=cv.aruco.detectMarkers(self._frame,self.arucoDict,
@@ -438,7 +438,7 @@ class Camera():
 
   def ShowFrame(self):
     cv.imshow("Frame",self._frame)
-
+    cv.waitKey(10) & 0xFF == ord("q")
 
 class PID():
   """ PID controller class """
@@ -678,10 +678,10 @@ class Vehicle():
                         0,yaw_relative,     # PSI
                         self.dt,yaw,area)
       out = self.pid.Process()
-      
+
       if self.cam.IsSteadyState():
         out_land = out[2]
-      else:out_land = 0 
+      else:out_land = 0
       #self.plot.PutVar100(self.cam.dist)
       if (self.cam.AltitudeMarkerRelative() >= -0.75):
         self._land_on_marker = True
@@ -710,7 +710,7 @@ class Vehicle():
         while not rospy.is_shutdown():
           start_time = time.time()
           self.Go2Aruco()
-          self.ShowCam(1)
+          #self.ShowCam(1)
           self.Terminal()
           self.dt = round(time.time()-start_time,2)
           if self.cam.IsSteadyState():
@@ -723,6 +723,8 @@ class Vehicle():
       sh.error("No mission with the name {}".format(mission_name))
       return -1
 
+  def odroid_test_alt(self):
+    return self.nav.GetAltitude()
 
   def Terminal(self):
     print("""
@@ -734,6 +736,7 @@ class Vehicle():
           mission position {}
           is marker detected: {}
           is item dropped: {}
+          dt: {}
           ======================================
           """.format(self.nav.curent_mode,
                      self.home.position,
@@ -741,44 +744,5 @@ class Vehicle():
                      self.current_mission,
                      self.DICT_MISSIONS[self.current_mission].position,
                      self.cam.IsMarkerDetected(),
-                     self._item_drop))
-
-
-# def main():
-#   try:
-#     quad = Quadrotor("GAZEBO","DICT_5X5_100",True,
-#                     0.33,0.05,0,
-#                     0.33,0.05,0,
-#                     0.1,0,0,
-#                     1,0,0)
-#     quad.SetMode("GUIDED")
-#     quad.SetHomePosition()
-#     quad.Takeoff(2)
-#     quad.Sleep(3)
-#     quad.MissionAdd(lat=-35.36322005,
-#                     lon=149.16515675,
-#                     alt=2,
-#                     name="PATIENT_1",
-#                     marker_id=42)
-#     quad.Go2MissionPoint("PATIENT_1")
-#     while not rospy.is_shutdown():
-#       start_time = time.time()
-
-#       quad.Go2Aruco()
-#       quad.ShowCam(1)
-#       quad.Terminal()
-#       if quad.LandOnMarker():
-#         break
-
-#       quad.dt = round(time.time()-start_time,2)
-#       if cv.waitKey(10) & 0xFF == ord("q"):
-#         cv.destroyAllWindows()
-#         break
-#     quad.plot.Plot100()
-
-#   except KeyboardInterrupt:
-#     sh.warning("Keyboard Interrupt, Shutting down")
-
-
-# if __name__ == '__main__':
-#   main()
+                     self._item_drop,
+                     1/self.dt))
