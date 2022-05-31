@@ -9,6 +9,7 @@ import cv2 as cv
 import numpy as np
 import rospy
 import time
+import serial 
 import matplotlib.pyplot as plt
 from cv_bridge import CvBridge
 from pymavlink import mavutil
@@ -278,6 +279,18 @@ class PyMavlink():
     pos = (msg.lat,msg.lon,msg.alt,msg.relative_alt)
     return pos
 
+class RangeFinder():
+  def __init__(self,serial_port,boud):
+    self.ser = serial.Serial(serial_port,boud,timeout=1)
+    self.ser.reset_input_buffer()
+    self.data = 0
+
+  def __DataCallback(self):
+    self.data = self.ser.readline().decode("utf-8").rstrip()
+    
+  def GetData(self):
+    self.__DataCallback()
+    return self.data
 
 class Camera():
   """ Aruco marker detection class """
