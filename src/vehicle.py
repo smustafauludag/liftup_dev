@@ -303,6 +303,7 @@ class PyMavlink():
     pos = (msg.lat,msg.lon,msg.alt,msg.relative_alt)
     return pos
 
+
 class RangeFinder():
   def __init__(self,serial_port,boud):
     self.ser = serial.Serial(serial_port,boud,timeout=1)
@@ -311,10 +312,11 @@ class RangeFinder():
 
   def __DataCallback(self):
     self.data = self.ser.readline().decode("utf-8").rstrip()
-    
+
   def GetData(self):
     self.__DataCallback()
     return self.data
+
 
 class Camera():
   """ Aruco marker detection class """

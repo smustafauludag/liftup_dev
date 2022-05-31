@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+
 """
 Basic dijkstra algorithm
-@authors Akif Canatan, Osman Özkal
+@authors Akif Canatan, Osman ozkal
 @mails akif.canitin@gmail.com , osmanozkal06@gmail.com
 """
 from collections import defaultdict
@@ -36,10 +38,10 @@ class Graph:
 
         # Base Case : If j is source
         if parent[j] == -1:
-            print(j, end='-'),
+            print('{}-'.format(j)),
             return
         self.printPath(parent, parent[j])
-        print(j, end='-')
+        print('{}-'.format(j))
 
     # A utility function to print
     # the constructed distance
@@ -118,9 +120,7 @@ graph = [[0, 6, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 5, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 4, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 0, 6],
-         [0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 6, 0]
-
-         ]
+         [0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 6, 0]]
 
 # Print the solution
 g.dijkstra(graph, 0)
