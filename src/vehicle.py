@@ -4,7 +4,7 @@ Drone control with aruco markers
 @author Sefer Mustafa Uludag
 @mail smustafauludag@gmail.com
 """
-
+from math import radians, cos, sin, asin, sqrt
 import cv2 as cv
 import numpy as np
 import rospy
@@ -26,6 +26,30 @@ def Distance(p1 ,p2):
   '''
   dist= np.sqrt(np.power((p1[0]-p2[0]),2) + np.power((p1[1]-p2[1]),2))
   return dist
+
+
+def DistanceGlobal(p1,p2):
+  """
+  Calculates distance between two global coordinates
+  :param1: array [lat1,lon1]
+  :param2: array [lat2,lon2]
+  :returns: distance
+  """
+  lat1 = p1[0]
+  lon1 = p1[1]
+  lat2 = p2[0]
+  lon2 = p2[1]
+
+  # Haversine Formula
+  dlon = lon2 - lon1
+  dlat = lat2 - lat1
+  a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+  c = 2 * asin(sqrt(a))
+    
+  # Radius of earth in kilometers. Use 3956 for miles
+  r = 6371
+
+  return(c*r)
 
 
 def Clamp(var,n):
