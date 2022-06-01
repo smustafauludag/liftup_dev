@@ -753,7 +753,7 @@ class Vehicle():
           if self.cam.IsMarkerDetected():
             break
           
-        while not rospy.is_shutdown():
+        while True:
           start_time = time.time()
           print("entering go2aruco")
           self.Go2Aruco()
