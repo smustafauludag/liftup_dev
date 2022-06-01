@@ -706,8 +706,11 @@ class Vehicle():
   def Go2Aruco(self):
     """ Navigate the quadrotor to the aruco marker in visual """
     marker_id = self.DICT_MISSIONS[self.current_mission].marker_id
+    print(marker_id)
     marker_center, frame_center, area = self.cam.GetMarkerFrameInfo(marker_id)
+    print(marker_center)
     if self.cam.IsMarkerDetected():
+      print("lalalal")
       yaw = self.nav.GetYaw()
       yaw_relative = self.cam.YawMarkerRelative()
       alt_desired = self.DICT_MISSIONS[self.current_mission].position[2]
@@ -748,7 +751,7 @@ class Vehicle():
             mission_name,marker_id))
           if self.cam.IsMarkerDetected():
             break
-        print(rospy.is_shutdown())
+          
         while not rospy.is_shutdown():
           start_time = time.time()
           self.Go2Aruco()
