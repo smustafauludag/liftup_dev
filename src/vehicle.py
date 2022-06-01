@@ -755,6 +755,7 @@ class Vehicle():
           
         while not rospy.is_shutdown():
           start_time = time.time()
+          print("entering go2aruco")
           self.Go2Aruco()
           #self.ShowCam(1)
           print("go to arukodan cikti")
