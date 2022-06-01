@@ -5,11 +5,15 @@ Basic dijkstra algorithm
 @authors Akif Canatan, Osman ozkal
 @mails akif.canitin@gmail.com , osmanozkal06@gmail.com
 """
-from collections import defaultdict
 
-import heapq
+from vehicle import Mission
 
-from collections import defaultdict
+m0 = Mission(0,0,0,"NODE_0",0)
+m1 = Mission(0,0,0,"NODE_1",0)
+m2 = Mission(0,0,0,"NODE_2",0)
+m3 = Mission(0,0,0,"CHARGER_0",0)
+
+
 
 
 # Class to represent a graph
@@ -48,7 +52,7 @@ class Graph:
     # array
     def printSolution(self, dist, parent):
         src = 0
-        print("Vertex \t\tDistance from Source\tPath")
+        print("Vertex \t\tDistance from Source \t\tPath")
         for i in range(1, len(dist)):
             print("\n%d --> %d \t\t%d \t\t\t\t\t" % (src, i, dist[i])),
             self.printPath(parent, i)
