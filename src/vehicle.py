@@ -550,10 +550,11 @@ class PID():
     self.params[3][2] = self.error[3][0] + self.error[3][1]
     
     # u = [e_proportional,e_derivative,e_integral]*[kp,kd,ki].T
-    self.output[0] = Clamp(np.dot(self.params[0],self.kConstants[0].T),1.5)
-    self.output[1] = Clamp(np.dot(self.params[1],self.kConstants[1].T),1.5)
-    self.output[2] = Clamp(np.dot(self.params[2],self.kConstants[2].T),1.5)
-    self.output[3] = Clamp(np.dot(self.params[3],self.kConstants[3].T),1.5)
+    # Max speed was changed from 1.5 to 1.0 to avoid real time problems
+    self.output[0] = Clamp(np.dot(self.params[0],self.kConstants[0].T),1.0)
+    self.output[1] = Clamp(np.dot(self.params[1],self.kConstants[1].T),1.0)
+    self.output[2] = Clamp(np.dot(self.params[2],self.kConstants[2].T),1.0)
+    self.output[3] = Clamp(np.dot(self.params[3],self.kConstants[3].T),1.0)
     
     # e[k-1] = e[k]
     self.error[0][1] = self.error[0][0]
