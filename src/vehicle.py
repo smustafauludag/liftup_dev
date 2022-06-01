@@ -752,7 +752,7 @@ class Vehicle():
             mission_name,marker_id))
           if self.cam.IsMarkerDetected():
             break
-          
+        print("koddan cikiyoruz")
         while True:
           start_time = time.time()
           print("entering go2aruco")
