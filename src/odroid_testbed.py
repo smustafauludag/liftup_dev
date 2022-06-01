@@ -17,10 +17,8 @@ def main():
                 marker_id=0)
   
   try:
-    uav.SetMode("STABILIZE")
-    uav.SetHomePosition()
-    uav.nav.ArmDisarm(1)
-    #uav.Go2MissionPoint("MEDIC_1")
+    uav.SetMode("GUIDED")
+    uav.Go2MissionPoint("MEDIC_1")
 
   except KeyboardInterrupt:
     sh.warning("Keyboard Interrupt, Shutting down")
