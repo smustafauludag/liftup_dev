@@ -746,14 +746,14 @@ class Vehicle():
           self.cam.GetMarkerFrameInfo(marker_id)
           sh.info("Going to mission {}, no marker[{}] seen yet".format(
             mission_name,marker_id))
-          print(self.cam.IsMarkerDetected())
           if self.cam.IsMarkerDetected():
             break
-          
+        print(rospy.is_shutdown())
         while not rospy.is_shutdown():
           start_time = time.time()
           self.Go2Aruco()
           #self.ShowCam(1)
+          print("go to arukodan cikti")
           self.Terminal()
           self.dt = round(time.time()-start_time,2)
           if self.cam.IsSteadyState():
