@@ -746,7 +746,7 @@ class Vehicle():
           self.cam.GetMarkerFrameInfo(marker_id)
           sh.info("Going to mission {}, no marker[{}] seen yet".format(
             mission_name,marker_id))
-          print(rospy.is_shutdown())
+          print(self.cam.IsMarkerDetected())
           if self.cam.IsMarkerDetected():
             break
           
