@@ -26,10 +26,6 @@ while(True):
 	out.write(frame)
 	
 	# The original input frame is shown in the window
-	cv2.imshow('Original', frame)
-
-	# The window showing the operated video stream
-	cv2.imshow('frame', hsv)
 
 	
 	# Wait for 'a' key to stop the program
