@@ -704,6 +704,7 @@ class Vehicle():
 
 
   def Go2Aruco(self):
+    print("im in")
     """ Navigate the quadrotor to the aruco marker in visual """
     marker_id = self.DICT_MISSIONS[self.current_mission].marker_id
     print(marker_id)
