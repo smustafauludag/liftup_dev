@@ -2,18 +2,36 @@
 
 """
 Basic dijkstra algorithm
-@authors Akif Canatan, Osman ozkal
-@mails akif.canitin@gmail.com , osmanozkal06@gmail.com
+@authors Akif Canatan, Osman ozkal, Sefer Mustafa Uludag
+@mails akif.canitin@gmail.com , osmanozkal06@gmail.com, smustafauludag@gmail.com
 """
 
-from vehicle import Mission
-
-m0 = Mission(0,0,0,"NODE_0",0)
-m1 = Mission(0,0,0,"NODE_1",0)
-m2 = Mission(0,0,0,"NODE_2",0)
-m3 = Mission(0,0,0,"CHARGER_0",0)
+from vehicle import Distance, Mission 
+import numpy as np
 
 
+class Node(object):
+    """
+    Node class for dijkstra
+    """
+    def __init__(self,position,id,ways):
+        """
+        @param position: [x,y]
+        @param id: node_id
+        @param ways: node connections to others list. [-1] if all the ways are are closed.
+        """
+        self._pos = position
+        self._id = id
+        self._way = np.array(ways)
+        
+    def get_position(self):
+        return self._pos
+    
+    def get_id(self):
+        return self._id
+    
+    def ways(self):
+        return self._way
 
 
 # Class to represent a graph
@@ -111,20 +129,34 @@ class Graph:
 
 g = Graph()
 
-graph = [[0, 6, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [6, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 11, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 2, 0, 0, 0, 4, 7, 0, 0, 0, 0, 0, 0],
-         [4, 0, 0, 0, 0, 3, 0, 0, 8, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 3, 0, 2, 0, 0, 1, 0, 0, 0, 0],
-         [0, 0, 0, 4, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14],
-         [0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 12, 0, 0],
-         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 5, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 4, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 0, 6],
-         [0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 6, 0]]
+node_0 = Node(position=[0,0],id=0,ways=[1,5])
+node_1 = Node(position=[2,1],id=1,ways=[0,2,3,4,5])
+node_2 = Node(position=[5,1],id=2,ways=[1,3,6,8])
+node_3 = Node(position=[4,2],id=3,ways=[1,2,4,6])
+node_4 = Node(position=[3,3],id=4,ways=[1,3,5,6,7])
+node_5 = Node(position=[1,4],id=5,ways=[0,1,4,7])
+node_6 = Node(position=[4,4],id=6,ways=[2,3,4,7,8])
+node_7 = Node(position=[3,5],id=7,ways=[4,5,6,8])
+node_8 = Node(position=[5,5],id=8,ways=[2,6,7])
 
+all_nodes = [node_0,
+             node_1,
+             node_2,
+             node_3,
+             node_4,
+             node_5,
+             node_6,
+             node_7,
+             node_8]
+
+matrix = np.zeros((len(all_nodes),len(all_nodes)))
+for i in range (0,len(all_nodes)):
+    for j in range (0,len(all_nodes)):
+        if j not in all_nodes[i].ways() or all_nodes[i].ways == -1:
+            matrix[i][j] = 0
+        else: 
+            matrix[i][j] = np.round(Distance(all_nodes[i].get_position(),all_nodes[j].get_position()),2)
+
+print(matrix)
 # Print the solution
-g.dijkstra(graph, 0)
+g.dijkstra(matrix, 0)
