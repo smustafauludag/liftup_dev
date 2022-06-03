@@ -715,6 +715,7 @@ class Vehicle():
       yaw = self.nav.GetYaw()
       print("yaw get")
       yaw_relative = self.cam.YawMarkerRelative()
+      print("yaw relative")
       alt_desired = self.DICT_MISSIONS[self.current_mission].position[2]
       
       #PROBLEM : Simulation cannot detect marker under 0.7,0.6 meters altitude
