@@ -280,7 +280,9 @@ class PyMavlink():
 
   def GetYaw(self):
     """ Yaw angle from ATTITUDE """
+    print("yaw in")
     msg = self._the_connection.recv_match(type='ATTITUDE',blocking=True)
+    print("yaw out")
     self._yaw = msg.yaw
     return self._yaw
 
