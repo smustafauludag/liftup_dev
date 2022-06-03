@@ -768,6 +768,7 @@ class Vehicle():
           #self.ShowCam(1)
           print("go to arukodan cikti")
           self.Terminal()
+          print("termial out")
           self.dt = round(time.time()-start_time,2)
           if self.cam.IsSteadyState():
             if mission_name[:5] == "MEDIC":
