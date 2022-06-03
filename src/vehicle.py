@@ -715,7 +715,8 @@ class Vehicle():
     if self.cam.IsMarkerDetected():
       print("lalalal")
       
-      #TODO Uncomment th code below before real testimg
+      #TODO Uncomment th code below before real testing
+      yaw = 0
       #yaw = self.nav.GetYaw()
       print("yaw get")
       yaw_relative = self.cam.YawMarkerRelative()
