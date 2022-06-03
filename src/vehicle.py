@@ -625,8 +625,9 @@ class Vehicle():
 
     if vehicle_type == "QUAD":
       self.vc_type = 0
-      rng = RangeFinder("/dev/ttyUSB1",9600)
-      self.rng_z = rng.GetData()
+      #TODO uncomment the below rng section before real testing
+      # rng = RangeFinder("/dev/ttyUSB1",9600)
+      # self.rng_z = rng.GetData()
     elif vehicle_type == "ROVER":
       self.vc_type = 1
     else:
