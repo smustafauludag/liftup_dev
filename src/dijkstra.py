@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 """
-Basic dijkstra algorithm
-@authors Akif Canatan, Osman ozkal, Sefer Mustafa Uludag
-@mails akif.canitin@gmail.com , osmanozkal06@gmail.com, smustafauludag@gmail.com
+Dijkstra algorithm
+@authors: Akif Canatan, Osman ozkal, Sefer Mustafa Uludag
+@mails: akif.canitin@gmail.com , osmanozkal06@gmail.com, smustafauludag@gmail.com
 """
 
-from vehicle import Distance, Mission 
+from vehicle import Distance
 import numpy as np
 
 
@@ -127,7 +127,7 @@ class Graph:
         self.printSolution(dist, parent)
 
 
-g = Graph()
+
 
 node_0 = Node(position=[0,0],id=0,ways=[1,5])
 node_1 = Node(position=[2,1],id=1,ways=[0,2,3,4,5])
@@ -148,7 +148,7 @@ all_nodes = [node_0,
              node_6,
              node_7,
              node_8]
-
+# Create graph
 matrix = np.zeros((len(all_nodes),len(all_nodes)))
 for i in range (0,len(all_nodes)):
     for j in range (0,len(all_nodes)):
@@ -159,4 +159,5 @@ for i in range (0,len(all_nodes)):
 
 print(matrix)
 # Print the solution
+g = Graph()
 g.dijkstra(matrix, 0)
