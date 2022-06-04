@@ -196,7 +196,7 @@ class PyMavlink():
 
   def ArmDisarm(self,key):
     """ 
-    Arm or disarm the dron
+    Arm or disarm the drone
     :param key: 1 for arm, 0 for disarm
     """
     if (key == 1):
@@ -280,9 +280,7 @@ class PyMavlink():
 
   def GetYaw(self):
     """ Yaw angle from ATTITUDE """
-    print("yaw in")
     msg = self._the_connection.recv_match(type='ATTITUDE',blocking=True)
-    print("yaw out")
     self._yaw = msg.yaw
     return self._yaw
 
@@ -707,21 +705,15 @@ class Vehicle():
 
 
   def Go2Aruco(self):
-    print("im in")
+
     """ Navigate the quadrotor to the aruco marker in visual """
     marker_id = self.DICT_MISSIONS[self.current_mission].marker_id
-    print(marker_id)
     marker_center, frame_center, area = self.cam.GetMarkerFrameInfo(marker_id)
-    print(marker_center)
     if self.cam.IsMarkerDetected():
-      print("lalalal")
-      
-      #TODO Uncomment th code below before real testing
-      yaw = 0
-      #yaw = self.nav.GetYaw()
-      print("yaw get")
+
+
+      yaw = self.nav.GetYaw()
       yaw_relative = self.cam.YawMarkerRelative()
-      print("yaw relative")
       alt_desired = self.DICT_MISSIONS[self.current_mission].position[2]
       
       #PROBLEM : Simulation cannot detect marker under 0.7,0.6 meters altitude
@@ -760,15 +752,11 @@ class Vehicle():
             mission_name,marker_id))
           if self.cam.IsMarkerDetected():
             break
-        print("koddan cikiyoruz")
         while True:
           start_time = time.time()
-          print("entering go2aruco")
           self.Go2Aruco()
           #self.ShowCam(1)
-          print("go to arukodan cikti")
           self.Terminal()
-          print("termial out")
           self.dt = round(time.time()-start_time,2)
           if self.cam.IsSteadyState():
             if mission_name[:5] == "MEDIC":

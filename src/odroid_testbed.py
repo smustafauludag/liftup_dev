@@ -10,15 +10,18 @@ def main():
                 0.1,0,0,
                 1,0,0)
 
-  uav.MissionAdd(lat=-35.36322005,
-                lon=149.16515675,
-                alt=2,
-                name="MEDIC_1",
-                marker_id=0)
+  # uav.MissionAdd(lat=-35.36322005,
+  #               lon=149.16515675,
+  #               alt=2,
+  #               name="MEDIC_1",
+  #               marker_id=0)
   
   try:
     uav.SetMode("GUIDED")
-    uav.Go2MissionPoint("MEDIC_1")
+    #uav.Go2MissionPoint("MEDIC_1")
+    uav.Takeoff(2)
+    uav.nav.SetSpeedLocalNed(0.5,0,0,0)
+
 
   except KeyboardInterrupt:
     sh.warning("Keyboard Interrupt, Shutting down")

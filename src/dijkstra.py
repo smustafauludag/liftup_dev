@@ -10,6 +10,7 @@ from vehicle import Distance
 import numpy as np
 
 
+
 class Node(object):
     """
     Node class for dijkstra
@@ -152,12 +153,29 @@ all_nodes = [node_0,
 matrix = np.zeros((len(all_nodes),len(all_nodes)))
 for i in range (0,len(all_nodes)):
     for j in range (0,len(all_nodes)):
-        if j not in all_nodes[i].ways() or all_nodes[i].ways == -1:
+        if j not in all_nodes[i].ways() or all_nodes[i].ways() == -1:
             matrix[i][j] = 0
         else: 
             matrix[i][j] = np.round(Distance(all_nodes[i].get_position(),all_nodes[j].get_position()),2)
 
 print(matrix)
+
+total_cost = 0
+path_list = []
+def create_path(current_node,target_node):
+    if len(path_list) == 0: path_list.append(current_node)
+    for i in current_node.ways():
+        if all_nodes[i] in path_list: continue
+    path_list.append(all_nodes[i])
+    total_cost = total_cost + matrix[current_node.get_id()][i]
+    create_path(all_nodes[i],target_node)
+
+
+
+
+
+
+
 # Print the solution
 g = Graph()
 g.dijkstra(matrix, 0)
