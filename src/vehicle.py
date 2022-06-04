@@ -91,10 +91,12 @@ def QGCSendVoiceMessage(msg):
 class PyMavlink():
   '''Quadrotor navigation and communication class via pymavlink'''
   def __init__(self,dev):
-    self.__DICT_DEVICE_ADRESS = {"USB" : ["/dev/ttyUSB0",57600],
+    self.__DICT_DEVICE_ADRESS = {"USB0" : ["/dev/ttyUSB0",57600],
+                                 "ACM0" : ["/dev/ttyACM0",57600],
                                  "GAZEBO_1" : ["udpin:localhost:14550",115200],
                                  "GAZEBO_2" : ["udpin:localhost:14560",115200],
-                                 "GAZEBO_3" : ["udpin:localhost:14570",115200]}
+                                 "GAZEBO_3" : ["udpin:localhost:14570",115200],
+                                 "ROVER_SIM": ["tcp:127.0.0.1:5750",115200]}
     if dev not in self.__DICT_DEVICE_ADRESS.keys():
       sh.error("Wrong key for device adress")
     else:
