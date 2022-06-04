@@ -707,7 +707,7 @@ class Vehicle():
 
 
   def Go2Aruco(self):
-
+    #TODO Navigation is set to 2D
     """ Navigate the quadrotor to the aruco marker in visual """
     marker_id = self.DICT_MISSIONS[self.current_mission].marker_id
     marker_center, frame_center, area = self.cam.GetMarkerFrameInfo(marker_id)
@@ -735,7 +735,9 @@ class Vehicle():
         self._land_on_marker = True
       else: self._land_on_marker = False
 
-      self.nav.SetSpeedLocalNed(out[0],out[1],out_land,out[3])
+      #TODO ---
+      #self.nav.SetSpeedLocalNed(out[0],out[1],out_land,out[3])
+      self.nav.SetSpeedLocalNed(out[0],out[1],0,out[3])
     else:sh.warning("No aruco in visual")
 
 
