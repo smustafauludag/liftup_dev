@@ -17,7 +17,7 @@ def main():
   #               marker_id=0)
   
   try:
-    uav.SetMode("GUIDED")
+    uav.SetMode("STABILIZE")
     uav.nav.ArmDisarm(1)
     #uav.Go2MissionPoint("MEDIC_1")
     #uav.Takeoff(2)
