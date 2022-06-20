@@ -2,7 +2,6 @@
 # saving an operated video
 
 # organize imports
-import numpy as np
 import cv2
 
 # This will return video from the first webcam on your computer.

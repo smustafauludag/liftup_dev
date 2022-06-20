@@ -46,11 +46,13 @@ try:
   if uav_1._item_drop:
     for i in range(10):
       lat,lon,alt,rel = ugv_1.GlobalPosition()
+      sh.info(ugv_1.GlobalPosition())
     uav_1.MissionAdd(lat=lat/10**7,
                   lon=lon/10**7,
-                  alt=1.5,
+                  alt=0.6,
                   name="LAND_1",
                   marker_id=0)
   uav_1.Go2MissionPoint("LAND_1")
+  uav_1.LandOnMarker()
 except KeyboardInterrupt:
   sh.warning("Keyboard Interrupt, Shutting down")

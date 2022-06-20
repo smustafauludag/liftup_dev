@@ -91,7 +91,7 @@ def QGCSendVoiceMessage(msg):
 class PyMavlink():
   '''Quadrotor navigation and communication class via pymavlink'''
   def __init__(self,dev):
-    self.__DICT_DEVICE_ADRESS = {"USB0" : ["/dev/ttyUSB0",57600],
+    self.__DICT_DEVICE_ADRESS = {"USB0" : ["/dev/ttyUSB1",57600],
                                  "ACM0" : ["/dev/ttyACM0",57600],
                                  "GAZEBO_1" : ["udpin:localhost:14550",115200],
                                  "GAZEBO_2" : ["udpin:localhost:14560",115200],
@@ -707,7 +707,7 @@ class Vehicle():
 
 
   def Go2Aruco(self):
-    #TODO Navigation is set to 2D
+    #TODO Navigation is set to 3D
     """ Navigate the quadrotor to the aruco marker in visual """
     marker_id = self.DICT_MISSIONS[self.current_mission].marker_id
     marker_center, frame_center, area = self.cam.GetMarkerFrameInfo(marker_id)
@@ -737,7 +737,7 @@ class Vehicle():
 
       #TODO ---
       #self.nav.SetSpeedLocalNed(out[0],out[1],out_land,out[3])
-      self.nav.SetSpeedLocalNed(out[0],out[1],0,out[3])
+      self.nav.SetSpeedLocalNed(out[0],out[1],out_land,out[3])
     else:sh.warning("No aruco in visual")
 
 
@@ -759,7 +759,7 @@ class Vehicle():
         while True:
           start_time = time.time()
           self.Go2Aruco()
-          #self.ShowCam(1)
+          self.ShowCam(1)
           self.Terminal()
           self.dt = round(time.time()-start_time,2)
           if self.cam.IsSteadyState():
