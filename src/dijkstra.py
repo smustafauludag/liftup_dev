@@ -12,123 +12,122 @@ import numpy as np
 
 
 class Node(object):
+  """
+  Node class for dijkstra
+  """
+  def __init__(self,position,id,ways):
     """
-    Node class for dijkstra
+    @param position: [x,y]
+    @param id: node_id
+    @param ways: list of connections to other nodes
     """
-    def __init__(self,position,id,ways):
-        """
-        @param position: [x,y]
-        @param id: node_id
-        @param ways: node connections to others list. [-1] if all the ways are are closed.
-        """
-        self._pos = position
-        self._id = id
-        self._way = np.array(ways)
-        
-    def get_position(self):
-        return self._pos
+    self._pos = position
+    self._id = id
+    self._way = np.array(ways)
     
-    def get_id(self):
-        return self._id
-    
-    def ways(self):
-        return self._way
+  def get_position(self):
+    return self._pos
+  
+  def get_id(self):
+    return self._id
+  
+  def ways(self):
+    return self._way
 
 
 # Class to represent a graph
-class Graph:
+class Graph():
 
+  def __init__(self,src,target):
+    self.nodes = []
+    self.src = src
+    self.target = target
     # A utility function to find the
     # vertex with minimum dist value, from
     # the set of vertices still in queue
-    def minDistance(self, dist, queue):
-        # Initialize min value and min_index as -1
-        minimum = float("Inf")
-        min_index = -1
+  def minDistance(self, dist, queue):
+    # Initialize min value and min_index as -1
+    minimum = float("Inf")
+    min_index = -1
 
-        # from the dist array,pick one which
-        # has min value and is till in queue
-        for i in range(len(dist)):
-            if dist[i] < minimum and i in queue:
-                minimum = dist[i]
-                min_index = i
-        return min_index
+    # from the dist array,pick one which
+    # has min value and is till in queue
+    for i in range(len(dist)):
+      if dist[i] < minimum and i in queue:
+        minimum = dist[i]
+        min_index = i
+    return min_index
 
     # Function to print shortest path
     # from source to j
     # using parent array
-    def printPath(self, parent, j):
+  def printPath(self, parent, j):
 
-        # Base Case : If j is source
-        if parent[j] == -1:
-            print('{}-'.format(j)),
-            return
-        self.printPath(parent, parent[j])
-        print('{}-'.format(j))
+    # Base Case : If j is source
+    if parent[j] == -1: return
+    self.printPath(parent, parent[j])
+    self.nodes.append(j)
+
 
     # A utility function to print
     # the constructed distance
     # array
-    def printSolution(self, dist, parent):
-        src = 0
-        print("Vertex \t\tDistance from Source \t\tPath")
-        for i in range(1, len(dist)):
-            print("\n%d --> %d \t\t%d \t\t\t\t\t" % (src, i, dist[i])),
-            self.printPath(parent, i)
+  def printSolution(self, dist, parent):
+    path = "{}".format(self.src)
+    print("\nVertex \t\tDistance from Source \tPath")
+    print("""\n{} --> {} \t\t{} \t\t""".format(self.src, self.target, dist[self.target])),
+    self.printPath(parent, self.target)
+    for i in self.nodes:
+      path = path+ "-{}".format(i)
+    print(path)
 
 
+  def dijkstra(self, graph):
 
-    def dijkstra(self, graph, src):
+    row = len(graph)
+    col = len(graph[0])
 
-        row = len(graph)
-        col = len(graph[0])
+    # The output array. dist[i] will hold
+    # the shortest distance from src to i
+    # Initialize all distances as INFINITE
+    dist = [float("Inf")] * row
 
-        # The output array. dist[i] will hold
-        # the shortest distance from src to i
-        # Initialize all distances as INFINITE
-        dist = [float("Inf")] * row
+    # Parent array to store
+    # shortest path tree
+    parent = [-1] * row
 
-        # Parent array to store
-        # shortest path tree
-        parent = [-1] * row
+    # Distance of source vertex
+    # from itself is always 0
+    dist[self.src] = 0
 
-        # Distance of source vertex
-        # from itself is always 0
-        dist[src] = 0
+    # Add all vertices in queue
+    queue = []
+    for i in range(row):
+      queue.append(i)
 
-        # Add all vertices in queue
-        queue = []
-        for i in range(row):
-            queue.append(i)
+    # Find shortest path for all vertices
+    while queue:
 
-        # Find shortest path for all vertices
-        while queue:
+      # Pick the minimum dist vertex
+      # from the set of vertices
+      # still in queue
+      u = self.minDistance(dist, queue)
 
-            # Pick the minimum dist vertex
-            # from the set of vertices
-            # still in queue
-            u = self.minDistance(dist, queue)
+      # remove min element
+      queue.remove(u)
 
-            # remove min element
-            queue.remove(u)
-
-            # Update dist value and parent
-            # index of the adjacent vertices of
-            # the picked vertex. Consider only
-            # those vertices which are still in
-            # queue
-            for i in range(col):
-
-                if graph[u][i] and i in queue:
-                    if dist[u] + graph[u][i] < dist[i]:
-                        dist[i] = dist[u] + graph[u][i]
-                        parent[i] = u
-
-        # print the constructed distance array
-        self.printSolution(dist, parent)
-
-
-
+      # Update dist value and parent
+      # index of the adjacent vertices of
+      # the picked vertex. Consider only
+      # those vertices which are still in
+      # queue
+      """ Relaxation """
+      for i in range(col):
+        if graph[u][i] and i in queue:
+          if dist[u] + graph[u][i] < dist[i]:
+            dist[i] = round(dist[u] + graph[u][i],2)
+            parent[i] = u
+    self.printSolution(dist, parent)
 
 node_0 = Node(position=[0,0],id=0,ways=[1,5])
 node_1 = Node(position=[2,1],id=1,ways=[0,2,3,4,5])
@@ -152,30 +151,11 @@ all_nodes = [node_0,
 # Create graph
 matrix = np.zeros((len(all_nodes),len(all_nodes)))
 for i in range (0,len(all_nodes)):
-    for j in range (0,len(all_nodes)):
-        if j not in all_nodes[i].ways() or all_nodes[i].ways() == -1:
-            matrix[i][j] = 0
-        else: 
-            matrix[i][j] = np.round(Distance(all_nodes[i].get_position(),all_nodes[j].get_position()),2)
-
-print(matrix)
-
-total_cost = 0
-path_list = []
-def create_path(current_node,target_node):
-    if len(path_list) == 0: path_list.append(current_node)
-    for i in current_node.ways():
-        if all_nodes[i] in path_list: continue
-    path_list.append(all_nodes[i])
-    total_cost = total_cost + matrix[current_node.get_id()][i]
-    create_path(all_nodes[i],target_node)
-
-
-
-
-
-
-
+  for j in range (0,len(all_nodes)):
+    if j not in all_nodes[i].ways():
+      matrix[i][j] = np.inf
+    else: 
+      matrix[i][j] = np.round(Distance(all_nodes[i].get_position(),all_nodes[j].get_position()),2)
 # Print the solution
-g = Graph()
-g.dijkstra(matrix, 0)
+g = Graph(src=0,target=8)
+g.dijkstra(matrix)
